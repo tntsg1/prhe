@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { GrainOverlay, SepiaFilter, Vignette } from './components/VintageEffects';
-import NewspaperHeader from './components/NewspaperHeader';
-import Section from './components/Section';
-import { content } from './data/content';
-import { Timeline, CauseCard, StatBar, RepealStamp } from './components/InteractiveComponents';
+// 注意：本地运行时，引用本地文件必须带后缀名
+import { GrainOverlay, SepiaFilter, Vignette } from './components/VintageEffects.tsx';
+import NewspaperHeader from './components/NewspaperHeader.tsx';
+import Section from './components/Section.tsx';
+import { content } from './data/content.ts';
+import { Timeline, CauseCard, StatBar, RepealStamp } from './components/InteractiveComponents.tsx';
+import { VintageVideoPlayer } from './components/VintageVideoPlayer.tsx';
 import { motion } from 'framer-motion';
 import { ChevronDown, Archive } from 'lucide-react';
 
@@ -102,6 +104,16 @@ const App: React.FC = () => {
               ))}
             </div>
           </div>
+        </Section>
+
+        {/* New Section: Newsreel Video */}
+        <Section id="newsreel" title={content.newsreel.title} headline={content.newsreel.headline} className="bg-ink text-paper bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
+          <div className="text-center max-w-3xl mx-auto mb-8">
+             <p className="text-lg font-body italic opacity-80">
+               "A moving picture exhibition demonstrating the stark realities of the enforcement era."
+             </p>
+          </div>
+          <VintageVideoPlayer src={content.newsreel.videoUrl} caption={content.newsreel.caption} />
         </Section>
 
         {/* Section 4: Repeal */}

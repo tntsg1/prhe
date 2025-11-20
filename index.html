@@ -1,30 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Prohibition Gazette</title>
+    
+    <!-- 1. 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Courier+Prime:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <style>
-      /* Custom Scrollbar for that vintage feel */
-      ::-webkit-scrollbar {
-        width: 12px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #fdf6e3;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #2c2925;
-        border: 2px solid #fdf6e3;
-      }
-      body {
-        background-color: #fdf6e3;
-        color: #2c2925;
-      }
-    </style>
+    
+    <!-- 2. 配置 Tailwind 主题 -->
     <script>
       tailwind.config = {
         theme: {
@@ -48,19 +32,572 @@
         }
       }
     </script>
-  <script type="importmap">
+
+    <!-- 3. 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Courier+Prime:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- 4. React & ReactDOM (UMD 版本，支持 file:// 协议) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- 5. Framer Motion (UMD 版本) -->
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+
+    <!-- 6. Babel (用于在浏览器编译 JSX) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar { width: 12px; }
+      ::-webkit-scrollbar-track { background: #fdf6e3; }
+      ::-webkit-scrollbar-thumb { background: #2c2925; border: 2px solid #fdf6e3; }
+      body { background-color: #fdf6e3; color: #2c2925; }
+      
+      /* Flip Card Utilities */
+      .perspective-1000 { perspective: 1000px; }
+      .preserve-3d { transform-style: preserve-3d; }
+      .backface-hidden { backface-visibility: hidden; }
+      
+      /* Stamp Mask */
+      .mask-stamp {
+        -webkit-mask-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+        mask-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+      }
+    </style>
+<script type="importmap">
 {
   "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
-    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24"
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0"
   }
 }
 </script>
 </head>
-  <body>
+<body>
     <div id="root"></div>
-  </body>
+
+    <!-- 核心业务逻辑，全部写在这里 -->
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+      const { motion, AnimatePresence } = window.Motion;
+
+      // --- 0. 图标组件 (手写 SVG 以避免 file:// 协议下的 import 问题) ---
+      const Icons = {
+        Scale: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>,
+        Cross: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2c0 1.1.9 2 2 2h5v5c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2Z"/></svg>,
+        Factory: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/></svg>,
+        Flag: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>,
+        Swords: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5" x2="9" y1="14" y2="18"/><line x1="7" x2="4" y1="17" y2="20"/><line x1="3" x2="5" y1="19" y2="21"/></svg>,
+        DollarSign: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
+        AlertTriangle: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>,
+        TrendingUp: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>,
+        Archive: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>,
+        ChevronDown: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      };
+
+      const IconWrapper = ({ name, className, size = 24 }) => {
+        const IconComponent = Icons[name] || Icons.AlertTriangle;
+        return (
+            <div className={className} style={{ width: size, height: size }}>
+                <IconComponent />
+            </div>
+        );
+      };
+
+      // --- 1. 数据 (Content) ---
+      const content = {
+        intro: {
+          title: "The Era of Prohibition",
+          subtitle: "A Comprehensive Analysis of the 'Noble Experiment'",
+          date: "January 17, 1920",
+          summary: "The Prohibition era in the United States, spanning from 1920 to 1933, was a transformative period in American history marked by the constitutional ban on alcohol. Known as the 'Noble Experiment,' it emerged from decades of social reform but ultimately led to unintended consequences that reshaped the nation's economy, society, and legal landscape."
+        },
+        section1: {
+          title: "I. The Details",
+          headline: "18th Amendment Ratified!",
+          text: "Prohibition was enacted through the 18th Amendment to the U.S. Constitution, prohibiting the manufacture, sale, or transportation of intoxicating liquors. Operationalized by the Volstead Act, it defined intoxicating liquors as any beverage containing more than 0.5% alcohol.",
+          timeline: [
+            { year: 1913, event: "Webb-Kenyon Act", desc: "Banned shipment of alcohol from 'wet' to 'dry' states." },
+            { year: 1917, event: "18th Amendment Passed", desc: "Congress passes amendment amid WWI patriotism." },
+            { year: 1920, event: "Prohibition Begins", desc: "Effective Jan 17. The Volstead Act is enforced." },
+            { year: 1929, event: "Valentine's Massacre", desc: "Gang violence reaches its peak in Chicago." },
+            { year: 1933, event: "Repeal", desc: "21st Amendment ratifies the end of Prohibition." }
+          ]
+        },
+        section2: {
+          title: "II. The Causes",
+          headline: "A Confluence of Forces",
+          causes: [
+            { title: "Temperance Advocacy", icon: "Scale", desc: "Groups like the Anti-Saloon League framed alcohol as a moral evil destroying families." },
+            { title: "Religious Influence", icon: "Cross", desc: "Evangelical groups viewed alcohol as sinful and incompatible with American values." },
+            { title: "Productivity", icon: "Factory", desc: "Industrialists like Henry Ford wanted a sober, efficient workforce." },
+            { title: "Nativism", icon: "Flag", desc: "Anti-immigrant sentiment linked alcohol to 'un-American' behaviors of new immigrants." },
+            { title: "Wartime Policy", icon: "Swords", desc: "WWI grain conservation measures created a patriotic rationale for bans." },
+            { title: "Tax Shifts", icon: "DollarSign", desc: "The new Income Tax (1913) reduced government reliance on alcohol tax revenue." }
+          ]
+        },
+        section3: {
+          title: "III. The Consequences",
+          headline: "The Rise of Shadows",
+          stats: [
+            { label: "Smuggled Spirits (Gallons)", value: "100M", detail: "Consumed 1920-1930" },
+            { label: "Al Capone's Annual Income", value: "$60M", detail: "From bootlegging alone" },
+            { label: "Lost Tax Revenue", value: "$11B", detail: "Federal government loss" },
+            { label: "Poisoning Deaths", value: "10,000", detail: "Due to toxic moonshine" }
+          ]
+        },
+        newsreel: {
+            title: "IV. The Newsreel",
+            headline: "History in Motion",
+            videoUrl: "https://www.youtube.com/embed/ttqT6W0gqFU?si=D0z-tGg1lGvL0j5P&grayscale=1",
+            caption: "Archival footage from the era showing enforcement agents destroying barrels of alcohol in urban streets."
+        },
+        section4: {
+          title: "V. The Repeal",
+          headline: "Happy Days Are Here Again",
+          text: "Repealed on December 5, 1933, via the 21st Amendment. The Great Depression intensified the need for tax revenue and jobs. Widespread flouting of the law had eroded respect for legal institutions.",
+        },
+        references: [
+          "Acemoglu, D., et al. (2004). Women, War, and Wages.",
+          "Okrent, D. (2010). Last Call: The Rise and Fall of Prohibition.",
+          "Kyvig, D. E. (1979). Repealing national prohibition.",
+          "Owens, E. (2011). Are Underground Markets Really More Violent?",
+          "García-Jimeno, C. (2016). The Political Economy of Moral Conflict.",
+          "Miron, J. & Zwiebel, J. (1991). Alcohol Consumption During Prohibition.",
+          "Levine, H. (1984). The alcohol problem in America.",
+          "Blocker, J. S. (2006). Did prohibition really work?",
+          "Highsmith, A. (2010). America's great experiment.",
+          "Welskopp, T. (2010). Amerikas große Ernüchterung."
+        ]
+      };
+
+      // --- 2. 组件: VintageEffects ---
+      const GrainOverlay = () => (
+        <div className="pointer-events-none fixed inset-0 z-50 opacity-10 mix-blend-multiply">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <filter id="noiseFilter">
+              <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
+            </filter>
+            <rect width="100%" height="100%" filter="url(#noiseFilter)" />
+          </svg>
+        </div>
+      );
+
+      const SepiaFilter = () => (
+        <div className="pointer-events-none fixed inset-0 z-40 bg-sepia opacity-10 mix-blend-overlay"></div>
+      );
+
+      const Vignette = () => (
+        <div className="pointer-events-none fixed inset-0 z-40 bg-[radial-gradient(circle,transparent_60%,rgba(44,41,37,0.4)_100%)]"></div>
+      );
+
+      // --- 3. 组件: NewspaperHeader ---
+      const NewspaperHeader = () => {
+        const today = new Date("1933-12-05").toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+        return (
+          <header className="pt-8 px-4 border-b-8 border-double border-ink bg-paper sticky top-0 z-30 shadow-lg">
+            <div className="max-w-6xl mx-auto">
+              <div className="flex justify-between items-center border-b border-ink pb-2 font-mono text-xs md:text-sm uppercase tracking-wider mb-4">
+                <span>Vol. XIII... No. 420</span>
+                <span>Price Two Cents</span>
+                <span>{today}</span>
+              </div>
+
+              <motion.h1 
+                className="text-5xl md:text-7xl lg:text-9xl font-headline font-black text-center tracking-tighter leading-none mb-4 text-ink"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 1, type: 'spring' }}
+              >
+                The Prohibition Gazette
+              </motion.h1>
+
+              <div className="text-center font-serif italic text-lg md:text-xl mb-6 text-sepia-dark">
+                "All the News That's Fit to Print — And Some That Isn't"
+              </div>
+
+              <nav className="flex flex-wrap justify-center gap-4 md:gap-8 font-headline font-bold uppercase text-sm md:text-base border-y-2 border-ink py-2 mb-2">
+                <a href="#details" className="hover:bg-ink hover:text-paper px-2 transition-colors">The Facts</a>
+                <a href="#causes" className="hover:bg-ink hover:text-paper px-2 transition-colors">The Causes</a>
+                <a href="#consequences" className="hover:bg-ink hover:text-paper px-2 transition-colors">The Fallout</a>
+                <a href="#repeal" className="hover:bg-ink hover:text-paper px-2 transition-colors">Repeal</a>
+                <a href="#classifieds" className="hover:bg-ink hover:text-paper px-2 transition-colors">Classifieds</a>
+              </nav>
+            </div>
+          </header>
+        );
+      };
+
+      // --- 4. 组件: Section ---
+      const Section = ({ id, title, headline, children, className = "" }) => {
+        return (
+          <section id={id} className={`py-16 md:py-24 border-b-2 border-ink/20 ${className}`}>
+            <div className="max-w-5xl mx-auto px-6 md:px-12">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+              >
+                <div className="flex items-center gap-4 mb-2">
+                  <div className="h-[1px] bg-ink flex-grow"></div>
+                  <span className="font-mono text-sm uppercase tracking-widest">{title}</span>
+                  <div className="h-[1px] bg-ink flex-grow"></div>
+                </div>
+                
+                <h2 className="text-4xl md:text-6xl font-headline font-bold text-center mb-12 leading-tight">
+                  {headline}
+                </h2>
+
+                <div className="font-body text-lg leading-relaxed text-justify">
+                  {children}
+                </div>
+              </motion.div>
+            </div>
+          </section>
+        );
+      };
+
+      // --- 5. 组件: VintageVideoPlayer ---
+      const VintageVideoPlayer = ({ src, caption }) => {
+        return (
+          <div className="relative max-w-4xl mx-auto my-12">
+            <div className="h-8 bg-ink flex gap-2 px-2 mb-2 overflow-hidden select-none">
+              {[...Array(30)].map((_, i) => (
+                <div key={`top-${i}`} className="w-4 h-5 bg-paper/80 rounded-[1px] mt-1.5 flex-shrink-0" />
+              ))}
+            </div>
+
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="relative bg-black p-2 border-x-4 border-ink shadow-[10px_10px_0px_0px_rgba(44,41,37,0.5)]"
+            >
+              <div className="relative pb-[56.25%] h-0 overflow-hidden bg-gray-900">
+                <iframe 
+                  className="absolute top-0 left-0 w-full h-full filter sepia-[0.4] contrast-125 grayscale-[0.2]"
+                  src={src} 
+                  title="Vintage Newsreel"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  allowFullScreen
+                ></iframe>
+                
+                <div className="pointer-events-none absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay"></div>
+                <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_50px_rgba(0,0,0,0.8)]"></div>
+              </div>
+            </motion.div>
+
+            <div className="h-8 bg-ink flex gap-2 px-2 mt-2 overflow-hidden select-none">
+              {[...Array(30)].map((_, i) => (
+                <div key={`bottom-${i}`} className="w-4 h-5 bg-paper/80 rounded-[1px] mt-1.5 flex-shrink-0" />
+              ))}
+            </div>
+
+            {caption && (
+              <div className="text-center mt-4">
+                  <span className="font-mono text-sm italic text-sepia-dark border-b border-sepia inline-block px-4 pb-1">
+                  Fig 2. {caption}
+                  </span>
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      // --- 6. 组件: InteractiveComponents ---
+      
+      const Timeline = ({ events }) => {
+        const [activeYear, setActiveYear] = useState(null);
+
+        return (
+          <div className="my-12 py-8 border-y-4 border-ink border-double relative">
+            <h3 className="font-headline text-2xl text-center mb-8 uppercase tracking-widest">Chronology of Events</h3>
+            <div className="relative flex flex-col md:flex-row justify-between items-center gap-8 md:gap-4 px-4">
+              <div className="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-ink -z-10 transform -translate-y-1/2" />
+              
+              {events.map((item, index) => (
+                <motion.div 
+                  key={index}
+                  className="relative flex flex-col items-center cursor-pointer group"
+                  whileHover={{ scale: 1.05 }}
+                  onClick={() => setActiveYear(activeYear === index ? null : index)}
+                >
+                  <div className={`w-6 h-6 rounded-full border-4 border-paper transition-colors duration-300 z-10 ${activeYear === index ? 'bg-alert-red' : 'bg-ink group-hover:bg-sepia'}`} />
+                  <span className="font-headline font-bold text-xl mt-2 bg-paper px-2">{item.year}</span>
+                  
+                  <AnimatePresence>
+                    {(activeYear === index) && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="absolute top-16 w-48 md:w-64 bg-paper border-2 border-ink p-4 shadow-[4px_4px_0px_0px_rgba(44,41,37,1)] z-20 text-center"
+                      >
+                        <h4 className="font-bold font-mono mb-2 border-b border-sepia pb-1">{item.event}</h4>
+                        <p className="text-sm font-body italic">{item.desc}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ))}
+            </div>
+            <p className="text-center text-xs font-mono mt-8 text-sepia-dark opacity-60">Click year to inspect archives</p>
+          </div>
+        );
+      };
+
+      const CauseCard = ({ title, icon, desc }) => {
+        const [isFlipped, setIsFlipped] = useState(false);
+
+        return (
+          <div 
+            className="perspective-1000 w-full h-48 cursor-pointer group"
+            onClick={() => setIsFlipped(!isFlipped)}
+          >
+            <motion.div 
+              className="w-full h-full relative preserve-3d"
+              animate={{ rotateY: isFlipped ? 180 : 0 }}
+              transition={{ duration: 0.6 }}
+              style={{ transformStyle: 'preserve-3d' }}
+            >
+              {/* Front */}
+              <div className="absolute inset-0 backface-hidden bg-ink text-paper border-2 border-sepia p-4 flex flex-col items-center justify-center shadow-md">
+                <IconWrapper name={icon} className="mb-4 text-sepia" size={48} />
+                <h4 className="font-headline text-lg text-center uppercase">{title}</h4>
+                <span className="absolute bottom-2 right-2 text-xs font-mono opacity-50">TAP TO FLIP</span>
+              </div>
+
+              {/* Back */}
+              <div 
+                className="absolute inset-0 backface-hidden bg-paper text-ink border-2 border-ink p-4 flex items-center justify-center shadow-md" 
+                style={{ transform: 'rotateY(180deg)' }}
+              >
+                <p className="font-body text-center leading-snug">{desc}</p>
+              </div>
+            </motion.div>
+          </div>
+        );
+      };
+
+      const StatBar = ({ label, value, detail, delay }) => {
+        return (
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay, duration: 0.5 }}
+            className="flex items-center gap-4 mb-6 border-b border-sepia border-dashed pb-4 last:border-0"
+          >
+            <div className="p-3 bg-sepia/20 rounded-full">
+              <IconWrapper name="TrendingUp" className="text-ink" size={24} />
+            </div>
+            <div className="flex-grow">
+              <h5 className="font-mono text-sm uppercase tracking-widest text-sepia-dark">{label}</h5>
+              <div className="flex items-baseline gap-2">
+                <span className="font-headline text-3xl md:text-4xl font-bold text-alert-red">{value}</span>
+                <span className="font-body italic text-sm opacity-80 max-w-[200px]">{detail}</span>
+              </div>
+            </div>
+          </motion.div>
+        );
+      }
+
+      const RepealStamp = () => {
+        return (
+          <motion.div
+            initial={{ scale: 2, opacity: 0, rotate: -15 }}
+            whileInView={{ scale: 1, opacity: 1, rotate: -15 }}
+            viewport={{ once: true }}
+            transition={{ type: "spring", bounce: 0.5 }}
+            className="absolute top-0 right-0 md:right-10 border-4 border-alert-red text-alert-red px-4 py-2 z-10 mask-stamp"
+            style={{ mixBlendMode: 'multiply' }}
+          >
+            <span className="font-headline font-black text-4xl md:text-6xl uppercase tracking-tighter opacity-80">
+              REPEALED
+            </span>
+          </motion.div>
+        );
+      }
+
+      // --- 7. Main App Component ---
+      const App = () => {
+        const [showRefs, setShowRefs] = useState(false);
+
+        return (
+          <div className="min-h-screen bg-paper text-ink font-serif selection:bg-sepia selection:text-paper overflow-x-hidden">
+            <GrainOverlay />
+            <SepiaFilter />
+            <Vignette />
+
+            <NewspaperHeader />
+
+            <main className="relative z-10 pb-20">
+              
+              {/* Hero / Intro */}
+              <section className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-12 gap-8 border-b-4 border-ink">
+                <div className="md:col-span-7 relative group">
+                   <div className="overflow-hidden border-4 border-ink shadow-[8px_8px_0px_0px_rgba(44,41,37,1)]">
+                    <img 
+                      src="https://picsum.photos/seed/prohibition/800/600?grayscale" 
+                      alt="Prohibition Scene" 
+                      className="w-full h-auto filter sepia contrast-125 brightness-90 transition-transform duration-700 group-hover:scale-105"
+                    />
+                   </div>
+                   <p className="font-mono text-xs mt-2 italic text-center">Fig 1. Agents pouring confiscated alcohol into the sewers.</p>
+                </div>
+
+                <div className="md:col-span-5 flex flex-col justify-center">
+                  <h2 className="font-headline font-bold text-3xl md:text-5xl mb-6 leading-tight">
+                    THE NOBLE EXPERIMENT: <br/>
+                    <span className="text-sepia-dark">Salvation or Ruin?</span>
+                  </h2>
+                  <div className="first-letter:text-6xl first-letter:font-bold first-letter:font-headline first-letter:float-left first-letter:mr-3 first-letter:mt-[-10px]">
+                    <p className="text-lg leading-relaxed text-justify mb-4 font-body">
+                      {content.intro.summary}
+                    </p>
+                  </div>
+                  <div className="mt-8 text-center">
+                    <motion.a 
+                      href="#details"
+                      animate={{ y: [0, 10, 0] }}
+                      transition={{ repeat: Infinity, duration: 2 }}
+                      className="inline-flex flex-col items-center text-sm font-mono uppercase tracking-widest hover:text-alert-red transition-colors"
+                    >
+                      Read Full Report
+                      <IconWrapper name="ChevronDown" size={16} className="mt-1" />
+                    </motion.a>
+                  </div>
+                </div>
+              </section>
+
+              {/* Section 1: Details */}
+              <Section id="details" title={content.section1.title} headline={content.section1.headline}>
+                <div className="columns-1 md:columns-2 gap-8 mb-8">
+                  <p className="mb-4">{content.section1.text}</p>
+                  <p className="mb-4">The Bureau of Prohibition was created to oversee enforcement, though it faced massive challenges due to inadequate funding. 
+                  Urban areas like Chicago became hotspots for illegal activity, while the "dry" movement had roots going back to the 19th century.</p>
+                </div>
+                <Timeline events={content.section1.timeline} />
+              </Section>
+
+              {/* Section 2: Causes */}
+              <Section id="causes" title={content.section2.title} headline={content.section2.headline} className="bg-sepia/5">
+                <p className="text-center max-w-2xl mx-auto mb-12 text-xl italic">
+                  "Prohibition was not the result of a single cause but a confluence of social, economic, and political factors."
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {content.section2.causes.map((c, i) => (
+                    <CauseCard key={i} title={c.title} icon={c.icon} desc={c.desc} />
+                  ))}
+                </div>
+              </Section>
+
+              {/* Section 3: Consequences */}
+              <Section id="consequences" title={content.section3.title} headline={content.section3.headline}>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                  <div>
+                    <p className="text-lg mb-6">
+                      While intended to reduce crime and corruption, the "Noble Experiment" inadvertently fueled the rise of organized crime. 
+                      Illegal production known as "bootlegging" became a massive underground economy.
+                    </p>
+                    <p className="text-lg mb-6">
+                      Gangsters like Al Capone capitalized on the black market. The Bureau of Prohibition was notorious for corruption, 
+                      and the legal system was overwhelmed.
+                    </p>
+                  </div>
+                  <div className="bg-paper border-2 border-ink p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    <h4 className="font-headline font-bold text-2xl mb-6 border-b border-sepia pb-2">The Cost of Prohibition</h4>
+                    {content.section3.stats.map((s, i) => (
+                      <StatBar key={i} label={s.label} value={s.value} detail={s.detail} delay={i * 0.2} />
+                    ))}
+                  </div>
+                </div>
+              </Section>
+
+              {/* Section: Newsreel */}
+              <Section id="newsreel" title={content.newsreel.title} headline={content.newsreel.headline} className="bg-ink text-paper bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
+                <div className="text-center max-w-3xl mx-auto mb-8">
+                   <p className="text-lg font-body italic opacity-80">
+                     "A moving picture exhibition demonstrating the stark realities of the enforcement era."
+                   </p>
+                </div>
+                <VintageVideoPlayer src={content.newsreel.videoUrl} caption={content.newsreel.caption} />
+              </Section>
+
+              {/* Section 4: Repeal */}
+              <Section id="repeal" title={content.section4.title} headline={content.section4.headline}>
+                <div className="relative p-8 border-4 border-ink/50 bg-paper-texture">
+                  <RepealStamp />
+                  <div className="columns-1 md:columns-2 gap-8 text-lg font-body leading-relaxed">
+                    <p className="mb-4">
+                      {content.section4.text} The economic pressures of the Great Depression made the tax revenue from alcohol too tempting to ignore.
+                      President Franklin D. Roosevelt championed repeal as part of his New Deal.
+                    </p>
+                    <p>
+                      Today, the legacy of Prohibition reminds us of the complexities of legislating morality. It left a lasting impact on American 
+                      governance and inspired later debates on drug policy. The 21st Amendment remains the only time a constitutional amendment 
+                      was passed to overturn a previous one.
+                    </p>
+                  </div>
+                  
+                  <div className="mt-12 text-center">
+                    <div className="inline-block border-t-2 border-b-2 border-ink py-2 px-8">
+                      <h3 className="font-headline text-3xl">"A DRINK FOR EVERY MAN"</h3>
+                    </div>
+                  </div>
+                </div>
+              </Section>
+
+              {/* Classifieds */}
+              <section id="classifieds" className="max-w-4xl mx-auto px-6 pt-12">
+                <div className="border-t-4 border-black pt-4">
+                  <div 
+                    className="flex items-center justify-between cursor-pointer group"
+                    onClick={() => setShowRefs(!showRefs)}
+                  >
+                    <h3 className="font-headline text-2xl uppercase">Classifieds & References</h3>
+                    <IconWrapper name="Archive" className={`transition-transform duration-300 ${showRefs ? 'rotate-180' : ''}`} />
+                  </div>
+                  
+                  <motion.div 
+                    initial={false}
+                    animate={{ height: showRefs ? 'auto' : 0, opacity: showRefs ? 1 : 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 font-mono text-xs bg-ink/5 p-4">
+                      {content.references.map((ref, i) => (
+                        <div key={i} className="mb-2">
+                          <span className="font-bold mr-2">[{i + 1}]</span>
+                          {ref}
+                        </div>
+                      ))}
+                      <div className="col-span-full text-center pt-4 italic opacity-60">
+                        ...and 140+ additional archived documents from the Bureau of Prohibition.
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+              </section>
+
+              <footer className="text-center mt-20 mb-8 font-mono text-xs opacity-60">
+                <p>Est. 1920 • The Prohibition Gazette • Printed in U.S.A.</p>
+              </footer>
+            </main>
+          </div>
+        );
+      };
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    </script>
+</body>
 </html>

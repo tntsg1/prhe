@@ -39,8 +39,14 @@ export const content = {
       { label: "Poisoning Deaths", value: "10,000", detail: "Due to toxic moonshine" }
     ]
   },
+  newsreel: {
+    title: "IV. The Newsreel",
+    headline: "History in Motion",
+    videoUrl: "https://www.youtube.com/embed/ttqT6W0gqFU?si=D0z-tGg1lGvL0j5P&grayscale=1",
+    caption: "Archival footage from the era showing enforcement agents destroying barrels of alcohol in urban streets."
+  },
   section4: {
-    title: "IV. The Repeal",
+    title: "V. The Repeal",
     headline: "Happy Days Are Here Again",
     text: "Repealed on December 5, 1933, via the 21st Amendment. The Great Depression intensified the need for tax revenue and jobs. Widespread flouting of the law had eroded respect for legal institutions.",
   },

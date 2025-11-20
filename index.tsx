@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+// 在没有构建工具的情况下，本地运行必须带上文件后缀
+import App from './App.tsx';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
