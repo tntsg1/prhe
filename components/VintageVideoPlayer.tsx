@@ -7,6 +7,9 @@ interface VideoPlayerProps {
 }
 
 export const VintageVideoPlayer: React.FC<VideoPlayerProps> = ({ src, caption }) => {
+  // 简单的判断逻辑：如果后缀是视频格式，就认为是本地文件；否则认为是网页嵌入
+  const isNativeVideo = /\.(mp4|webm|ogg|mov)$/i.test(src);
+
   return (
     <div className="relative max-w-4xl mx-auto my-12">
       {/* Film Strip Decoration Top */}
@@ -25,14 +28,25 @@ export const VintageVideoPlayer: React.FC<VideoPlayerProps> = ({ src, caption })
       >
         {/* Screen Container */}
         <div className="relative pb-[56.25%] h-0 overflow-hidden bg-gray-900">
-          <iframe 
-            className="absolute top-0 left-0 w-full h-full filter sepia-[0.4] contrast-125 grayscale-[0.2]"
-            src={src} 
-            title="Vintage Newsreel"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowFullScreen
-          ></iframe>
+          {isNativeVideo ? (
+            <video 
+              className="absolute top-0 left-0 w-full h-full filter sepia-[0.4] contrast-125 grayscale-[0.2] object-cover"
+              controls
+              playsInline
+              src={src}
+            >
+              Your browser does not support the video tag.
+            </video>
+          ) : (
+            <iframe 
+              className="absolute top-0 left-0 w-full h-full filter sepia-[0.4] contrast-125 grayscale-[0.2]"
+              src={src} 
+              title="Vintage Newsreel"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowFullScreen
+            ></iframe>
+          )}
           
           {/* Old Film Flicker/Grain Overlay (CSS only) */}
           <div className="pointer-events-none absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay"></div>

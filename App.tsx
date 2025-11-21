@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 // 注意：本地运行时，引用本地文件必须带后缀名
 import { GrainOverlay, SepiaFilter, Vignette } from './components/VintageEffects.tsx';
@@ -62,9 +63,9 @@ const App: React.FC = () => {
           </div>
         </section>
 
-        {/* Section 1: Details */}
-        <Section id="details" title={content.section1.title} headline={content.section1.headline}>
-          <div className="columns-1 md:columns-2 gap-8 mb-8">
+        {/* Section 1: Details + SIDEBAR (New Layout) */}
+        <Section id="details" title={content.section1.title} headline={content.section1.headline} withSidebar={true}>
+          <div className="mb-8">
             <p className="mb-4">{content.section1.text}</p>
             <p className="mb-4">The Bureau of Prohibition was created to oversee enforcement, though it faced massive challenges due to inadequate funding. 
             Urban areas like Chicago became hotspots for illegal activity, while the "dry" movement had roots going back to the 19th century.</p>

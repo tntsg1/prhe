@@ -1,5 +1,7 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
+import Sidebar from './Sidebar.tsx';
 
 interface SectionProps {
   id?: string;
@@ -7,12 +9,13 @@ interface SectionProps {
   headline: string;
   children: React.ReactNode;
   className?: string;
+  withSidebar?: boolean;
 }
 
-const Section: React.FC<SectionProps> = ({ id, title, headline, children, className = "" }) => {
+const Section: React.FC<SectionProps> = ({ id, title, headline, children, className = "", withSidebar = false }) => {
   return (
     <section id={id} className={`py-16 md:py-24 border-b-2 border-ink/20 ${className}`}>
-      <div className="max-w-5xl mx-auto px-6 md:px-12">
+      <div className="max-w-6xl mx-auto px-6 md:px-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -29,9 +32,20 @@ const Section: React.FC<SectionProps> = ({ id, title, headline, children, classN
             {headline}
           </h2>
 
-          <div className="font-body text-lg leading-relaxed text-justify">
-            {children}
-          </div>
+          {withSidebar ? (
+             <div className="grid grid-cols-1 lg:grid-cols-3">
+                <div className="lg:col-span-2 font-body text-lg leading-relaxed text-justify">
+                  {children}
+                </div>
+                <div className="lg:col-span-1">
+                  <Sidebar />
+                </div>
+             </div>
+          ) : (
+            <div className="font-body text-lg leading-relaxed text-justify max-w-5xl mx-auto">
+              {children}
+            </div>
+          )}
         </motion.div>
       </div>
     </section>

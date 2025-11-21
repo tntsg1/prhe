@@ -38,14 +38,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Courier+Prime:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
-    <!-- 4. React & ReactDOM (UMD 版本，支持 file:// 协议) -->
+    <!-- 4. React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     
-    <!-- 5. Framer Motion (UMD 版本) -->
+    <!-- 5. Framer Motion -->
     <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
 
-    <!-- 6. Babel (用于在浏览器编译 JSX) -->
+    <!-- 6. Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
@@ -70,8 +70,8 @@
 {
   "imports": {
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
     "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0"
   }
@@ -81,12 +81,12 @@
 <body>
     <div id="root"></div>
 
-    <!-- 核心业务逻辑，全部写在这里 -->
+    <!-- 核心业务逻辑 -->
     <script type="text/babel">
       const { useState, useEffect } = React;
       const { motion, AnimatePresence } = window.Motion;
 
-      // --- 0. 图标组件 (手写 SVG 以避免 file:// 协议下的 import 问题) ---
+      // --- 0. 图标组件 (Inline SVG) ---
       const Icons = {
         Scale: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>,
         Cross: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2c0 1.1.9 2 2 2h5v5c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2Z"/></svg>,
@@ -97,7 +97,10 @@
         AlertTriangle: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>,
         TrendingUp: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>,
         Archive: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>,
-        ChevronDown: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        ChevronDown: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>,
+        Cloud: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.5 19c0-1.7-1.3-3-3-3h-1.1c-.1-2.6-2.1-4.7-4.7-4.7-2.1 0-4 1.4-4.6 3.4-.1 0-.3-.1-.4-.1-2.2 0-4 1.8-4 4s1.8 4 4 4h9.5c1.9 0 3.5-1.6 3.5-3.5Z"/></svg>,
+        Sun: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>,
+        Sparkles: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M9 3v4"/><path d="M3 5h4"/><path d="M3 9h4"/></svg>
       };
 
       const IconWrapper = ({ name, className, size = 24 }) => {
@@ -154,6 +157,7 @@
         newsreel: {
             title: "IV. The Newsreel",
             headline: "History in Motion",
+            // 可以替换为本地文件路径，如 "./movie.mp4"
             videoUrl: "https://www.youtube.com/embed/ttqT6W0gqFU?si=D0z-tGg1lGvL0j5P&grayscale=1",
             caption: "Archival footage from the era showing enforcement agents destroying barrels of alcohol in urban streets."
         },
@@ -234,11 +238,81 @@
         );
       };
 
-      // --- 4. 组件: Section ---
-      const Section = ({ id, title, headline, children, className = "" }) => {
+      // --- 4. 组件: Sidebar (New Feature) ---
+      const Sidebar = () => {
+        return (
+          <div className="hidden lg:block h-full border-l-2 border-ink pl-8 ml-8 space-y-10 font-body">
+            {/* Weather */}
+            <div className="border-b-2 border-ink pb-6">
+              <h4 className="font-mono font-bold uppercase tracking-widest text-xs mb-3">Weather Forecast</h4>
+              <div className="flex items-center gap-4">
+                 <IconWrapper name="Cloud" size={40} className="text-sepia-dark" />
+                 <div>
+                   <span className="font-headline font-bold text-3xl block">42°F</span>
+                   <span className="text-sm italic text-sepia-dark">Overcast & Chilly</span>
+                 </div>
+              </div>
+            </div>
+
+            {/* Society Whispers (Gossip) */}
+            <div>
+              <div className="bg-ink text-paper inline-block px-2 mb-3 transform -rotate-1">
+                <h4 className="font-headline font-bold text-xl">Society Whispers</h4>
+              </div>
+              <ul className="space-y-6">
+                <li>
+                  <div className="flex items-start gap-2">
+                     <IconWrapper name="Sparkles" size={16} className="mt-1 text-alert-red shrink-0" />
+                     <span className="font-bold text-sm leading-tight uppercase">Jazz Club Raid!</span>
+                  </div>
+                  <p className="text-sm leading-snug mt-1">
+                    Rumor has it the infamous "Blue Moon" speakeasy was raided last night. Several prominent politicians were seen fleeing through the back alley.
+                  </p>
+                </li>
+                <li>
+                   <div className="flex items-start gap-2">
+                     <IconWrapper name="Sparkles" size={16} className="mt-1 text-alert-red shrink-0" />
+                     <span className="font-bold text-sm leading-tight uppercase">Hemlines Rising?</span>
+                  </div>
+                  <p className="text-sm leading-snug mt-1">
+                    Scandal at the Mayor's ball as debutantes sport knee-length dresses. The Moral Society is reportedly drafting a letter of protest.
+                  </p>
+                </li>
+                 <li>
+                   <div className="flex items-start gap-2">
+                     <IconWrapper name="Sparkles" size={16} className="mt-1 text-alert-red shrink-0" />
+                     <span className="font-bold text-sm leading-tight uppercase">The Ghost of Gatsby?</span>
+                  </div>
+                  <p className="text-sm leading-snug mt-1">
+                    A mysterious bootlegger known only as "The Owl" is distributing top-shelf scotch. Police remain baffled.
+                  </p>
+                </li>
+              </ul>
+            </div>
+
+            {/* Vintage Ad */}
+            <div className="border-4 border-double border-ink p-4 text-center bg-ink/5 relative overflow-hidden group cursor-pointer hover:bg-ink/10 transition-colors">
+              <div className="absolute top-0 right-0 bg-alert-red text-paper text-[10px] px-2 font-bold">ADVERTISEMENT</div>
+              <IconWrapper name="TrendingUp" size={32} className="mx-auto mb-2 text-sepia-dark" />
+              <h5 className="font-headline font-black text-xl mb-1 uppercase leading-none">Dr. Winkle's Tonic</h5>
+              <p className="font-serif italic text-xs mb-3">"For Nerves, Gout, & Melancholy"</p>
+              <p className="text-[10px] leading-tight mb-3">
+                 Feeling the weight of the dry era? One spoon of our patent-pending elixir restores vigor! 
+                 <br/>(Contains 0.5% unspecified spirits)
+              </p>
+              <div className="font-mono font-bold text-xl border-t border-dashed border-ink pt-2 mt-2">
+                 Only $0.05
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      // --- 5. 组件: Section (Updated for Sidebar Layout) ---
+      const Section = ({ id, title, headline, children, className = "", withSidebar = false }) => {
         return (
           <section id={id} className={`py-16 md:py-24 border-b-2 border-ink/20 ${className}`}>
-            <div className="max-w-5xl mx-auto px-6 md:px-12">
+            <div className="max-w-6xl mx-auto px-6 md:px-12">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -255,17 +329,31 @@
                   {headline}
                 </h2>
 
-                <div className="font-body text-lg leading-relaxed text-justify">
-                  {children}
-                </div>
+                {withSidebar ? (
+                   <div className="grid grid-cols-1 lg:grid-cols-3">
+                      <div className="lg:col-span-2 font-body text-lg leading-relaxed text-justify">
+                        {children}
+                      </div>
+                      <div className="lg:col-span-1">
+                        <Sidebar />
+                      </div>
+                   </div>
+                ) : (
+                  <div className="font-body text-lg leading-relaxed text-justify max-w-5xl mx-auto">
+                    {children}
+                  </div>
+                )}
               </motion.div>
             </div>
           </section>
         );
       };
 
-      // --- 5. 组件: VintageVideoPlayer ---
+      // --- 6. 组件: VintageVideoPlayer (支持本地文件) ---
       const VintageVideoPlayer = ({ src, caption }) => {
+        // 简单的判断逻辑：如果后缀是视频格式，就认为是本地文件；否则认为是网页嵌入
+        const isNativeVideo = /\.(mp4|webm|ogg|mov)$/i.test(src);
+
         return (
           <div className="relative max-w-4xl mx-auto my-12">
             <div className="h-8 bg-ink flex gap-2 px-2 mb-2 overflow-hidden select-none">
@@ -282,14 +370,25 @@
               className="relative bg-black p-2 border-x-4 border-ink shadow-[10px_10px_0px_0px_rgba(44,41,37,0.5)]"
             >
               <div className="relative pb-[56.25%] h-0 overflow-hidden bg-gray-900">
-                <iframe 
-                  className="absolute top-0 left-0 w-full h-full filter sepia-[0.4] contrast-125 grayscale-[0.2]"
-                  src={src} 
-                  title="Vintage Newsreel"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                  allowFullScreen
-                ></iframe>
+                {isNativeVideo ? (
+                  <video 
+                    className="absolute top-0 left-0 w-full h-full filter sepia-[0.4] contrast-125 grayscale-[0.2] object-cover"
+                    controls
+                    playsInline
+                    src={src}
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                ) : (
+                  <iframe 
+                    className="absolute top-0 left-0 w-full h-full filter sepia-[0.4] contrast-125 grayscale-[0.2]"
+                    src={src} 
+                    title="Vintage Newsreel"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen
+                  ></iframe>
+                )}
                 
                 <div className="pointer-events-none absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 mix-blend-overlay"></div>
                 <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_50px_rgba(0,0,0,0.8)]"></div>
@@ -313,7 +412,7 @@
         );
       };
 
-      // --- 6. 组件: InteractiveComponents ---
+      // --- 7. 组件: InteractiveComponents ---
       
       const Timeline = ({ events }) => {
         const [activeYear, setActiveYear] = useState(null);
@@ -428,7 +527,7 @@
         );
       }
 
-      // --- 7. Main App Component ---
+      // --- 8. Main App Component ---
       const App = () => {
         const [showRefs, setShowRefs] = useState(false);
 
@@ -479,9 +578,9 @@
                 </div>
               </section>
 
-              {/* Section 1: Details */}
-              <Section id="details" title={content.section1.title} headline={content.section1.headline}>
-                <div className="columns-1 md:columns-2 gap-8 mb-8">
+              {/* Section 1: Details + SIDEBAR (Updated Grid) */}
+              <Section id="details" title={content.section1.title} headline={content.section1.headline} withSidebar={true}>
+                <div className="mb-8">
                   <p className="mb-4">{content.section1.text}</p>
                   <p className="mb-4">The Bureau of Prohibition was created to oversee enforcement, though it faced massive challenges due to inadequate funding. 
                   Urban areas like Chicago became hotspots for illegal activity, while the "dry" movement had roots going back to the 19th century.</p>
