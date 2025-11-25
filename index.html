@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Prohibition Gazette</title>
     
-    <!-- 1. 引入 Tailwind CSS -->
+    <!-- 1. Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 2. 配置 Tailwind 主题 -->
+    <!-- 2. Tailwind Config -->
     <script>
       tailwind.config = {
         theme: {
@@ -33,34 +33,25 @@
       }
     </script>
 
-    <!-- 3. 字体 -->
+    <!-- 3. Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Courier+Prime:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
-    <!-- 4. React & ReactDOM -->
+    <!-- 4. React Dependencies -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <!-- 5. Framer Motion -->
     <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
-
-    <!-- 6. Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
-      /* Custom Scrollbar */
       ::-webkit-scrollbar { width: 12px; }
       ::-webkit-scrollbar-track { background: #fdf6e3; }
       ::-webkit-scrollbar-thumb { background: #2c2925; border: 2px solid #fdf6e3; }
       body { background-color: #fdf6e3; color: #2c2925; }
-      
-      /* Flip Card Utilities */
       .perspective-1000 { perspective: 1000px; }
       .preserve-3d { transform-style: preserve-3d; }
       .backface-hidden { backface-visibility: hidden; }
-      
-      /* Stamp Mask */
       .mask-stamp {
         -webkit-mask-image: url('https://www.transparenttextures.com/patterns/stardust.png');
         mask-image: url('https://www.transparenttextures.com/patterns/stardust.png');
@@ -69,11 +60,11 @@
 <script type="importmap">
 {
   "imports": {
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0"
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0"
   }
 }
 </script>
@@ -81,12 +72,12 @@
 <body>
     <div id="root"></div>
 
-    <!-- 核心业务逻辑 -->
+    <!-- Application Script -->
     <script type="text/babel">
       const { useState, useEffect } = React;
       const { motion, AnimatePresence } = window.Motion;
 
-      // --- 0. 图标组件 (Inline SVG) ---
+      // --- Icons ---
       const Icons = {
         Scale: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>,
         Cross: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2c0 1.1.9 2 2 2h5v5c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2Z"/></svg>,
@@ -99,7 +90,6 @@
         Archive: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>,
         ChevronDown: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>,
         Cloud: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.5 19c0-1.7-1.3-3-3-3h-1.1c-.1-2.6-2.1-4.7-4.7-4.7-2.1 0-4 1.4-4.6 3.4-.1 0-.3-.1-.4-.1-2.2 0-4 1.8-4 4s1.8 4 4 4h9.5c1.9 0 3.5-1.6 3.5-3.5Z"/></svg>,
-        Sun: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>,
         Sparkles: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M9 3v4"/><path d="M3 5h4"/><path d="M3 9h4"/></svg>
       };
 
@@ -112,7 +102,7 @@
         );
       };
 
-      // --- 1. 数据 (Content) ---
+      // --- Data ---
       const content = {
         intro: {
           title: "The Era of Prohibition",
@@ -157,9 +147,8 @@
         newsreel: {
             title: "IV. The Newsreel",
             headline: "History in Motion",
-            // 可以替换为本地文件路径，如 "./movie.mp4"
-            videoUrl: "https://www.youtube.com/embed/ttqT6W0gqFU?si=D0z-tGg1lGvL0j5P&grayscale=1",
-            caption: "Archival footage from the era showing enforcement agents destroying barrels of alcohol in urban streets."
+            videoUrl: "./movie.mp4", // Default to local file
+            caption: "Archival footage from the era."
         },
         section4: {
           title: "V. The Repeal",
@@ -172,15 +161,11 @@
           "Kyvig, D. E. (1979). Repealing national prohibition.",
           "Owens, E. (2011). Are Underground Markets Really More Violent?",
           "García-Jimeno, C. (2016). The Political Economy of Moral Conflict.",
-          "Miron, J. & Zwiebel, J. (1991). Alcohol Consumption During Prohibition.",
-          "Levine, H. (1984). The alcohol problem in America.",
-          "Blocker, J. S. (2006). Did prohibition really work?",
-          "Highsmith, A. (2010). America's great experiment.",
-          "Welskopp, T. (2010). Amerikas große Ernüchterung."
+          "Miron, J. & Zwiebel, J. (1991). Alcohol Consumption During Prohibition."
         ]
       };
 
-      // --- 2. 组件: VintageEffects ---
+      // --- Visual Effects ---
       const GrainOverlay = () => (
         <div className="pointer-events-none fixed inset-0 z-50 opacity-10 mix-blend-multiply">
           <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
@@ -191,19 +176,12 @@
           </svg>
         </div>
       );
+      const SepiaFilter = () => <div className="pointer-events-none fixed inset-0 z-40 bg-sepia opacity-10 mix-blend-overlay"></div>;
+      const Vignette = () => <div className="pointer-events-none fixed inset-0 z-40 bg-[radial-gradient(circle,transparent_60%,rgba(44,41,37,0.4)_100%)]"></div>;
 
-      const SepiaFilter = () => (
-        <div className="pointer-events-none fixed inset-0 z-40 bg-sepia opacity-10 mix-blend-overlay"></div>
-      );
-
-      const Vignette = () => (
-        <div className="pointer-events-none fixed inset-0 z-40 bg-[radial-gradient(circle,transparent_60%,rgba(44,41,37,0.4)_100%)]"></div>
-      );
-
-      // --- 3. 组件: NewspaperHeader ---
+      // --- Header ---
       const NewspaperHeader = () => {
         const today = new Date("1933-12-05").toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
         return (
           <header className="pt-8 px-4 border-b-8 border-double border-ink bg-paper sticky top-0 z-30 shadow-lg">
             <div className="max-w-6xl mx-auto">
@@ -212,7 +190,6 @@
                 <span>Price Two Cents</span>
                 <span>{today}</span>
               </div>
-
               <motion.h1 
                 className="text-5xl md:text-7xl lg:text-9xl font-headline font-black text-center tracking-tighter leading-none mb-4 text-ink"
                 initial={{ scale: 0.9, opacity: 0 }}
@@ -221,11 +198,9 @@
               >
                 The Prohibition Gazette
               </motion.h1>
-
               <div className="text-center font-serif italic text-lg md:text-xl mb-6 text-sepia-dark">
                 "All the News That's Fit to Print — And Some That Isn't"
               </div>
-
               <nav className="flex flex-wrap justify-center gap-4 md:gap-8 font-headline font-bold uppercase text-sm md:text-base border-y-2 border-ink py-2 mb-2">
                 <a href="#details" className="hover:bg-ink hover:text-paper px-2 transition-colors">The Facts</a>
                 <a href="#causes" className="hover:bg-ink hover:text-paper px-2 transition-colors">The Causes</a>
@@ -238,10 +213,10 @@
         );
       };
 
-      // --- 4. 组件: Sidebar (New Feature) ---
+      // --- Sidebar (Gossip & Weather) ---
       const Sidebar = () => {
         return (
-          <div className="hidden lg:block h-full border-l-2 border-ink pl-8 ml-8 space-y-10 font-body">
+          <div className="hidden lg:block h-full border-l-2 border-ink pl-8 ml-8 space-y-10 font-body text-ink">
             {/* Weather */}
             <div className="border-b-2 border-ink pb-6">
               <h4 className="font-mono font-bold uppercase tracking-widest text-xs mb-3">Weather Forecast</h4>
@@ -254,7 +229,7 @@
               </div>
             </div>
 
-            {/* Society Whispers (Gossip) */}
+            {/* Society Whispers */}
             <div>
               <div className="bg-ink text-paper inline-block px-2 mb-3 transform -rotate-1">
                 <h4 className="font-headline font-bold text-xl">Society Whispers</h4>
@@ -308,7 +283,7 @@
         )
       }
 
-      // --- 5. 组件: Section (Updated for Sidebar Layout) ---
+      // --- Layout Section ---
       const Section = ({ id, title, headline, children, className = "", withSidebar = false }) => {
         return (
           <section id={id} className={`py-16 md:py-24 border-b-2 border-ink/20 ${className}`}>
@@ -349,9 +324,87 @@
         );
       };
 
-      // --- 6. 组件: VintageVideoPlayer (支持本地文件) ---
+      // --- Components ---
+      const Timeline = ({ events }) => {
+        const [activeYear, setActiveYear] = useState(null);
+        return (
+          <div className="my-12 py-8 border-y-4 border-ink border-double relative">
+            <h3 className="font-headline text-2xl text-center mb-8 uppercase tracking-widest">Chronology of Events</h3>
+            <div className="relative flex flex-col md:flex-row justify-between items-center gap-8 md:gap-4 px-4">
+              <div className="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-ink -z-10 transform -translate-y-1/2" />
+              {events.map((item, index) => (
+                <motion.div 
+                  key={index}
+                  className="relative flex flex-col items-center cursor-pointer group"
+                  whileHover={{ scale: 1.05 }}
+                  onClick={() => setActiveYear(activeYear === index ? null : index)}
+                >
+                  <div className={`w-6 h-6 rounded-full border-4 border-paper transition-colors duration-300 z-10 ${activeYear === index ? 'bg-alert-red' : 'bg-ink group-hover:bg-sepia'}`} />
+                  <span className="font-headline font-bold text-xl mt-2 bg-paper px-2">{item.year}</span>
+                  <AnimatePresence>
+                    {(activeYear === index) && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="absolute top-16 w-48 md:w-64 bg-paper border-2 border-ink p-4 shadow-[4px_4px_0px_0px_rgba(44,41,37,1)] z-20 text-center"
+                      >
+                        <h4 className="font-bold font-mono mb-2 border-b border-sepia pb-1">{item.event}</h4>
+                        <p className="text-sm font-body italic">{item.desc}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ))}
+            </div>
+            <p className="text-center text-xs font-mono mt-8 text-sepia-dark opacity-60">Click year to inspect archives</p>
+          </div>
+        );
+      };
+
+      const CauseCard = ({ title, icon, desc }) => {
+        const [isFlipped, setIsFlipped] = useState(false);
+        return (
+          <div className="perspective-1000 w-full h-48 cursor-pointer group" onClick={() => setIsFlipped(!isFlipped)}>
+            <motion.div className="w-full h-full relative preserve-3d" animate={{ rotateY: isFlipped ? 180 : 0 }} transition={{ duration: 0.6 }} style={{ transformStyle: 'preserve-3d' }}>
+              <div className="absolute inset-0 backface-hidden bg-ink text-paper border-2 border-sepia p-4 flex flex-col items-center justify-center shadow-md">
+                <IconWrapper name={icon} className="mb-4 text-sepia" size={48} />
+                <h4 className="font-headline text-lg text-center uppercase">{title}</h4>
+                <span className="absolute bottom-2 right-2 text-xs font-mono opacity-50">TAP TO FLIP</span>
+              </div>
+              <div className="absolute inset-0 backface-hidden bg-paper text-ink border-2 border-ink p-4 flex items-center justify-center shadow-md" style={{ transform: 'rotateY(180deg)' }}>
+                <p className="font-body text-center leading-snug">{desc}</p>
+              </div>
+            </motion.div>
+          </div>
+        );
+      };
+
+      const StatBar = ({ label, value, detail, delay }) => {
+        return (
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay, duration: 0.5 }}
+            className="flex items-center gap-4 mb-6 border-b border-sepia border-dashed pb-4 last:border-0"
+          >
+            <div className="p-3 bg-sepia/20 rounded-full">
+              <IconWrapper name="TrendingUp" className="text-ink" size={24} />
+            </div>
+            <div className="flex-grow">
+              <h5 className="font-mono text-sm uppercase tracking-widest text-sepia-dark">{label}</h5>
+              <div className="flex items-baseline gap-2">
+                <span className="font-headline text-3xl md:text-4xl font-bold text-alert-red">{value}</span>
+                <span className="font-body italic text-sm opacity-80 max-w-[200px]">{detail}</span>
+              </div>
+            </div>
+          </motion.div>
+        );
+      }
+
       const VintageVideoPlayer = ({ src, caption }) => {
-        // 简单的判断逻辑：如果后缀是视频格式，就认为是本地文件；否则认为是网页嵌入
+        // Auto-detect local video files
         const isNativeVideo = /\.(mp4|webm|ogg|mov)$/i.test(src);
 
         return (
@@ -412,122 +465,19 @@
         );
       };
 
-      // --- 7. 组件: InteractiveComponents ---
-      
-      const Timeline = ({ events }) => {
-        const [activeYear, setActiveYear] = useState(null);
+      const RepealStamp = () => (
+        <motion.div
+          initial={{ scale: 2, opacity: 0, rotate: -15 }}
+          whileInView={{ scale: 1, opacity: 1, rotate: -15 }}
+          viewport={{ once: true }}
+          transition={{ type: "spring", bounce: 0.5 }}
+          className="absolute top-0 right-0 md:right-10 border-4 border-alert-red text-alert-red px-4 py-2 z-10 mask-stamp"
+          style={{ mixBlendMode: 'multiply' }}
+        >
+          <span className="font-headline font-black text-4xl md:text-6xl uppercase tracking-tighter opacity-80">REPEALED</span>
+        </motion.div>
+      );
 
-        return (
-          <div className="my-12 py-8 border-y-4 border-ink border-double relative">
-            <h3 className="font-headline text-2xl text-center mb-8 uppercase tracking-widest">Chronology of Events</h3>
-            <div className="relative flex flex-col md:flex-row justify-between items-center gap-8 md:gap-4 px-4">
-              <div className="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-ink -z-10 transform -translate-y-1/2" />
-              
-              {events.map((item, index) => (
-                <motion.div 
-                  key={index}
-                  className="relative flex flex-col items-center cursor-pointer group"
-                  whileHover={{ scale: 1.05 }}
-                  onClick={() => setActiveYear(activeYear === index ? null : index)}
-                >
-                  <div className={`w-6 h-6 rounded-full border-4 border-paper transition-colors duration-300 z-10 ${activeYear === index ? 'bg-alert-red' : 'bg-ink group-hover:bg-sepia'}`} />
-                  <span className="font-headline font-bold text-xl mt-2 bg-paper px-2">{item.year}</span>
-                  
-                  <AnimatePresence>
-                    {(activeYear === index) && (
-                      <motion.div 
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        className="absolute top-16 w-48 md:w-64 bg-paper border-2 border-ink p-4 shadow-[4px_4px_0px_0px_rgba(44,41,37,1)] z-20 text-center"
-                      >
-                        <h4 className="font-bold font-mono mb-2 border-b border-sepia pb-1">{item.event}</h4>
-                        <p className="text-sm font-body italic">{item.desc}</p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              ))}
-            </div>
-            <p className="text-center text-xs font-mono mt-8 text-sepia-dark opacity-60">Click year to inspect archives</p>
-          </div>
-        );
-      };
-
-      const CauseCard = ({ title, icon, desc }) => {
-        const [isFlipped, setIsFlipped] = useState(false);
-
-        return (
-          <div 
-            className="perspective-1000 w-full h-48 cursor-pointer group"
-            onClick={() => setIsFlipped(!isFlipped)}
-          >
-            <motion.div 
-              className="w-full h-full relative preserve-3d"
-              animate={{ rotateY: isFlipped ? 180 : 0 }}
-              transition={{ duration: 0.6 }}
-              style={{ transformStyle: 'preserve-3d' }}
-            >
-              {/* Front */}
-              <div className="absolute inset-0 backface-hidden bg-ink text-paper border-2 border-sepia p-4 flex flex-col items-center justify-center shadow-md">
-                <IconWrapper name={icon} className="mb-4 text-sepia" size={48} />
-                <h4 className="font-headline text-lg text-center uppercase">{title}</h4>
-                <span className="absolute bottom-2 right-2 text-xs font-mono opacity-50">TAP TO FLIP</span>
-              </div>
-
-              {/* Back */}
-              <div 
-                className="absolute inset-0 backface-hidden bg-paper text-ink border-2 border-ink p-4 flex items-center justify-center shadow-md" 
-                style={{ transform: 'rotateY(180deg)' }}
-              >
-                <p className="font-body text-center leading-snug">{desc}</p>
-              </div>
-            </motion.div>
-          </div>
-        );
-      };
-
-      const StatBar = ({ label, value, detail, delay }) => {
-        return (
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay, duration: 0.5 }}
-            className="flex items-center gap-4 mb-6 border-b border-sepia border-dashed pb-4 last:border-0"
-          >
-            <div className="p-3 bg-sepia/20 rounded-full">
-              <IconWrapper name="TrendingUp" className="text-ink" size={24} />
-            </div>
-            <div className="flex-grow">
-              <h5 className="font-mono text-sm uppercase tracking-widest text-sepia-dark">{label}</h5>
-              <div className="flex items-baseline gap-2">
-                <span className="font-headline text-3xl md:text-4xl font-bold text-alert-red">{value}</span>
-                <span className="font-body italic text-sm opacity-80 max-w-[200px]">{detail}</span>
-              </div>
-            </div>
-          </motion.div>
-        );
-      }
-
-      const RepealStamp = () => {
-        return (
-          <motion.div
-            initial={{ scale: 2, opacity: 0, rotate: -15 }}
-            whileInView={{ scale: 1, opacity: 1, rotate: -15 }}
-            viewport={{ once: true }}
-            transition={{ type: "spring", bounce: 0.5 }}
-            className="absolute top-0 right-0 md:right-10 border-4 border-alert-red text-alert-red px-4 py-2 z-10 mask-stamp"
-            style={{ mixBlendMode: 'multiply' }}
-          >
-            <span className="font-headline font-black text-4xl md:text-6xl uppercase tracking-tighter opacity-80">
-              REPEALED
-            </span>
-          </motion.div>
-        );
-      }
-
-      // --- 8. Main App Component ---
       const App = () => {
         const [showRefs, setShowRefs] = useState(false);
 
@@ -536,12 +486,10 @@
             <GrainOverlay />
             <SepiaFilter />
             <Vignette />
-
             <NewspaperHeader />
 
             <main className="relative z-10 pb-20">
-              
-              {/* Hero / Intro */}
+              {/* Intro */}
               <section className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-12 gap-8 border-b-4 border-ink">
                 <div className="md:col-span-7 relative group">
                    <div className="overflow-hidden border-4 border-ink shadow-[8px_8px_0px_0px_rgba(44,41,37,1)]">
@@ -553,7 +501,6 @@
                    </div>
                    <p className="font-mono text-xs mt-2 italic text-center">Fig 1. Agents pouring confiscated alcohol into the sewers.</p>
                 </div>
-
                 <div className="md:col-span-5 flex flex-col justify-center">
                   <h2 className="font-headline font-bold text-3xl md:text-5xl mb-6 leading-tight">
                     THE NOBLE EXPERIMENT: <br/>
@@ -578,7 +525,7 @@
                 </div>
               </section>
 
-              {/* Section 1: Details + SIDEBAR (Updated Grid) */}
+              {/* Section 1 + Sidebar */}
               <Section id="details" title={content.section1.title} headline={content.section1.headline} withSidebar={true}>
                 <div className="mb-8">
                   <p className="mb-4">{content.section1.text}</p>
@@ -588,11 +535,9 @@
                 <Timeline events={content.section1.timeline} />
               </Section>
 
-              {/* Section 2: Causes */}
+              {/* Section 2 */}
               <Section id="causes" title={content.section2.title} headline={content.section2.headline} className="bg-sepia/5">
-                <p className="text-center max-w-2xl mx-auto mb-12 text-xl italic">
-                  "Prohibition was not the result of a single cause but a confluence of social, economic, and political factors."
-                </p>
+                <p className="text-center max-w-2xl mx-auto mb-12 text-xl italic">"Prohibition was not the result of a single cause but a confluence of social, economic, and political factors."</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {content.section2.causes.map((c, i) => (
                     <CauseCard key={i} title={c.title} icon={c.icon} desc={c.desc} />
@@ -600,18 +545,12 @@
                 </div>
               </Section>
 
-              {/* Section 3: Consequences */}
+              {/* Section 3 */}
               <Section id="consequences" title={content.section3.title} headline={content.section3.headline}>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                   <div>
-                    <p className="text-lg mb-6">
-                      While intended to reduce crime and corruption, the "Noble Experiment" inadvertently fueled the rise of organized crime. 
-                      Illegal production known as "bootlegging" became a massive underground economy.
-                    </p>
-                    <p className="text-lg mb-6">
-                      Gangsters like Al Capone capitalized on the black market. The Bureau of Prohibition was notorious for corruption, 
-                      and the legal system was overwhelmed.
-                    </p>
+                    <p className="text-lg mb-6">While intended to reduce crime and corruption, the "Noble Experiment" inadvertently fueled the rise of organized crime. Illegal production known as "bootlegging" became a massive underground economy.</p>
+                    <p className="text-lg mb-6">Gangsters like Al Capone capitalized on the black market. The Bureau of Prohibition was notorious for corruption, and the legal system was overwhelmed.</p>
                   </div>
                   <div className="bg-paper border-2 border-ink p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                     <h4 className="font-headline font-bold text-2xl mb-6 border-b border-sepia pb-2">The Cost of Prohibition</h4>
@@ -622,32 +561,23 @@
                 </div>
               </Section>
 
-              {/* Section: Newsreel */}
+              {/* Newsreel (Video) */}
               <Section id="newsreel" title={content.newsreel.title} headline={content.newsreel.headline} className="bg-ink text-paper bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
                 <div className="text-center max-w-3xl mx-auto mb-8">
-                   <p className="text-lg font-body italic opacity-80">
-                     "A moving picture exhibition demonstrating the stark realities of the enforcement era."
-                   </p>
+                   <p className="text-lg font-body italic opacity-80">"A moving picture exhibition demonstrating the stark realities of the enforcement era."</p>
+                   <p className="text-xs font-mono mt-2 text-sepia bg-black inline-block px-2 py-1">Playing Local File: movie.mp4</p>
                 </div>
                 <VintageVideoPlayer src={content.newsreel.videoUrl} caption={content.newsreel.caption} />
               </Section>
 
-              {/* Section 4: Repeal */}
+              {/* Section 4 */}
               <Section id="repeal" title={content.section4.title} headline={content.section4.headline}>
                 <div className="relative p-8 border-4 border-ink/50 bg-paper-texture">
                   <RepealStamp />
                   <div className="columns-1 md:columns-2 gap-8 text-lg font-body leading-relaxed">
-                    <p className="mb-4">
-                      {content.section4.text} The economic pressures of the Great Depression made the tax revenue from alcohol too tempting to ignore.
-                      President Franklin D. Roosevelt championed repeal as part of his New Deal.
-                    </p>
-                    <p>
-                      Today, the legacy of Prohibition reminds us of the complexities of legislating morality. It left a lasting impact on American 
-                      governance and inspired later debates on drug policy. The 21st Amendment remains the only time a constitutional amendment 
-                      was passed to overturn a previous one.
-                    </p>
+                    <p className="mb-4">{content.section4.text} The economic pressures of the Great Depression made the tax revenue from alcohol too tempting to ignore. President Franklin D. Roosevelt championed repeal as part of his New Deal.</p>
+                    <p>Today, the legacy of Prohibition reminds us of the complexities of legislating morality. It left a lasting impact on American governance and inspired later debates on drug policy.</p>
                   </div>
-                  
                   <div className="mt-12 text-center">
                     <div className="inline-block border-t-2 border-b-2 border-ink py-2 px-8">
                       <h3 className="font-headline text-3xl">"A DRINK FOR EVERY MAN"</h3>
@@ -659,29 +589,15 @@
               {/* Classifieds */}
               <section id="classifieds" className="max-w-4xl mx-auto px-6 pt-12">
                 <div className="border-t-4 border-black pt-4">
-                  <div 
-                    className="flex items-center justify-between cursor-pointer group"
-                    onClick={() => setShowRefs(!showRefs)}
-                  >
+                  <div className="flex items-center justify-between cursor-pointer group" onClick={() => setShowRefs(!showRefs)}>
                     <h3 className="font-headline text-2xl uppercase">Classifieds & References</h3>
                     <IconWrapper name="Archive" className={`transition-transform duration-300 ${showRefs ? 'rotate-180' : ''}`} />
                   </div>
-                  
-                  <motion.div 
-                    initial={false}
-                    animate={{ height: showRefs ? 'auto' : 0, opacity: showRefs ? 1 : 0 }}
-                    className="overflow-hidden"
-                  >
+                  <motion.div initial={false} animate={{ height: showRefs ? 'auto' : 0, opacity: showRefs ? 1 : 0 }} className="overflow-hidden">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 font-mono text-xs bg-ink/5 p-4">
                       {content.references.map((ref, i) => (
-                        <div key={i} className="mb-2">
-                          <span className="font-bold mr-2">[{i + 1}]</span>
-                          {ref}
-                        </div>
+                        <div key={i} className="mb-2"><span className="font-bold mr-2">[{i + 1}]</span>{ref}</div>
                       ))}
-                      <div className="col-span-full text-center pt-4 italic opacity-60">
-                        ...and 140+ additional archived documents from the Bureau of Prohibition.
-                      </div>
                     </div>
                   </motion.div>
                 </div>
