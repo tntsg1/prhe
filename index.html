@@ -90,7 +90,7 @@
         Archive: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>,
         ChevronDown: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>,
         Cloud: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.5 19c0-1.7-1.3-3-3-3h-1.1c-.1-2.6-2.1-4.7-4.7-4.7-2.1 0-4 1.4-4.6 3.4-.1 0-.3-.1-.4-.1-2.2 0-4 1.8-4 4s1.8 4 4 4h9.5c1.9 0 3.5-1.6 3.5-3.5Z"/></svg>,
-        Sparkles: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M9 3v4"/><path d="M3 5h4"/><path d="M3 9h4"/></svg>
+        Sparkles: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 21l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M9 3v4"/><path d="M3 5h4"/><path d="M3 9h4"/></svg>
       };
 
       const IconWrapper = ({ name, className, size = 24 }) => {
@@ -147,7 +147,10 @@
         newsreel: {
             title: "IV. The History Now Report",
             headline: "Exclusive Coverage",
-            videoUrl: "https://www.youtube.com/embed/mjinV8iqzjM",
+            // 使用 embed 格式，并添加 rel=0
+            videoUrl: "https://www.youtube.com/embed/mjinV8iqzjM?rel=0",
+            // 备用跳转链接 - 必须与嵌入的视频 ID 一致
+            watchUrl: "https://www.youtube.com/watch?v=mjinV8iqzjM",
             caption: "History Now special report: Revathy interviews Al Capone & Meyer Lansky on the impact of Prohibition."
         },
         section4: {
@@ -403,7 +406,7 @@
         );
       }
 
-      const VintageVideoPlayer = ({ src, caption }) => {
+      const VintageVideoPlayer = ({ src, watchUrl, caption }) => {
         // Auto-detect local video files
         const isNativeVideo = /\.(mp4|webm|ogg|mov)$/i.test(src);
 
@@ -447,6 +450,17 @@
                 <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_50px_rgba(0,0,0,0.8)]"></div>
               </div>
             </motion.div>
+
+            {/* ERROR 153 FALLBACK - 显眼的跳转链接 */}
+            {!isNativeVideo && watchUrl && (
+              <div className="text-center mt-3 bg-ink/5 border-2 border-dashed border-alert-red/50 p-3 mx-4">
+                 <p className="text-xs font-mono font-bold text-alert-red mb-1">⚠️ PLAYBACK ERROR?</p>
+                 <a href={watchUrl} target="_blank" rel="noopener noreferrer" className="text-ink font-bold text-lg underline hover:text-alert-red decoration-2 underline-offset-4">
+                    CLICK HERE TO WATCH ON YOUTUBE
+                 </a>
+                 <p className="text-[10px] italic mt-1 opacity-70">(Censorship agents may be blocking the signal...)</p>
+              </div>
+            )}
 
             <div className="h-8 bg-ink flex gap-2 px-2 mt-2 overflow-hidden select-none">
               {[...Array(30)].map((_, i) => (
@@ -567,7 +581,7 @@
                    <p className="text-lg font-body italic opacity-80">"A moving picture exhibition demonstrating the stark realities of the enforcement era."</p>
                    <p className="text-xs font-mono mt-2 text-sepia bg-black inline-block px-2 py-1">Featured Presentation</p>
                 </div>
-                <VintageVideoPlayer src={content.newsreel.videoUrl} caption={content.newsreel.caption} />
+                <VintageVideoPlayer src={content.newsreel.videoUrl} watchUrl={content.newsreel.watchUrl} caption={content.newsreel.caption} />
               </Section>
 
               {/* Section 4 */}
