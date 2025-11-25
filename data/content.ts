@@ -40,10 +40,10 @@ export const content = {
     ]
   },
   newsreel: {
-    title: "IV. The Newsreel",
-    headline: "History in Motion",
-    videoUrl: "https://www.youtube.com/embed/ttqT6W0gqFU?si=D0z-tGg1lGvL0j5P&grayscale=1",
-    caption: "Archival footage from the era showing enforcement agents destroying barrels of alcohol in urban streets."
+    title: "IV. The History Now Report",
+    headline: "Exclusive Coverage",
+    videoUrl: "https://www.youtube.com/embed/mjinV8iqzjM",
+    caption: "History Now special report: Revathy interviews Al Capone & Meyer Lansky on the impact of Prohibition."
   },
   section4: {
     title: "V. The Repeal",

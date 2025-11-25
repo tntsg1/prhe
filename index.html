@@ -145,10 +145,10 @@
           ]
         },
         newsreel: {
-            title: "IV. The Newsreel",
-            headline: "History in Motion",
-            videoUrl: "./movie.mp4", // Default to local file
-            caption: "Archival footage from the era."
+            title: "IV. The History Now Report",
+            headline: "Exclusive Coverage",
+            videoUrl: "https://www.youtube.com/embed/mjinV8iqzjM",
+            caption: "History Now special report: Revathy interviews Al Capone & Meyer Lansky on the impact of Prohibition."
         },
         section4: {
           title: "V. The Repeal",
@@ -247,10 +247,10 @@
                 <li>
                    <div className="flex items-start gap-2">
                      <IconWrapper name="Sparkles" size={16} className="mt-1 text-alert-red shrink-0" />
-                     <span className="font-bold text-sm leading-tight uppercase">Hemlines Rising?</span>
+                     <span className="font-bold text-sm leading-tight uppercase">Reporter's Courage</span>
                   </div>
                   <p className="text-sm leading-snug mt-1">
-                    Scandal at the Mayor's ball as debutantes sport knee-length dresses. The Moral Society is reportedly drafting a letter of protest.
+                    Our own Revathy was seen fearlessly questioning Al Capone at the courthouse steps. "Just doing my job," she was overheard saying.
                   </p>
                 </li>
                  <li>
@@ -565,7 +565,7 @@
               <Section id="newsreel" title={content.newsreel.title} headline={content.newsreel.headline} className="bg-ink text-paper bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
                 <div className="text-center max-w-3xl mx-auto mb-8">
                    <p className="text-lg font-body italic opacity-80">"A moving picture exhibition demonstrating the stark realities of the enforcement era."</p>
-                   <p className="text-xs font-mono mt-2 text-sepia bg-black inline-block px-2 py-1">Playing Local File: movie.mp4</p>
+                   <p className="text-xs font-mono mt-2 text-sepia bg-black inline-block px-2 py-1">Featured Presentation</p>
                 </div>
                 <VintageVideoPlayer src={content.newsreel.videoUrl} caption={content.newsreel.caption} />
               </Section>
